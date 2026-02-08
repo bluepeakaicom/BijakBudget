@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BijakBudget - Malaysian Grocery Savings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/react-phone-number-input@3.x/style.css"/>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f8fafc; /* slate-50 */
+      }
+      
+      /* Text Selection */
+      ::selection {
+        background-color: #0d9488; /* teal-600 */
+        color: white;
+      }
+
+      /* Custom overrides for react-phone-number-input */
+      .PhoneInput {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+      .PhoneInputCountry {
+        margin-right: 0.75rem; /* gap-3 equivalent */
+      }
+      .PhoneInputInput {
+        flex: 1;
+        min-width: 0;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: inherit;
+        font-family: inherit;
+        font-weight: inherit;
+      }
+      .PhoneInputInput:focus {
+        outline: none;
+        box-shadow: none;
+      }
+
+      /* Global Animations & Scrollbar */
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      .animate-slide-up {
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      
+      /* Custom Scrollbar - Slim & Sleek */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
+      }
+      
+      /* Utility for hiding scrollbar but keeping functionality */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-phone-number-input": "https://esm.sh/react-phone-number-input@3.4.9"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
