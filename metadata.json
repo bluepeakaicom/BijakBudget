@@ -2,6 +2,7 @@
   "name": "BijakBudget",
   "description": "A Malaysian grocery savings app to maximize SARA subsidies and compare prices.",
   "requestFramePermissions": [
-    "geolocation"
+    "geolocation",
+    "camera"
   ]
 }

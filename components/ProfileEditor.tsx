@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { UserData } from '../types';
-import { User, Mail, MapPin, Calendar, Save, Loader2, Phone, Edit3, ClipboardList, ChevronRight, ArrowLeft, Crown, Zap, HelpCircle, CreditCard } from 'lucide-react';
+import { UserData, ShopperPersona } from '../types';
+import { User, Mail, MapPin, Calendar, Save, Loader2, Phone, Edit3, ClipboardList, ChevronRight, ArrowLeft, Crown, Zap, HelpCircle, CreditCard, Brain, CheckCircle2, TrendingUp, Sparkles, Lock, Shield, Key, Smartphone, LogOut, Trash2, AlertTriangle, Eye, EyeOff, Laptop } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import { SubscriptionModal } from './SubscriptionModal';
 
@@ -9,18 +9,24 @@ interface ProfileEditorProps {
   user: UserData;
   onSave: (updatedUser: UserData) => void;
   onNavigateToPlan: () => void;
-  onNavigateToSara: () => void; // New prop
+  onNavigateToSara: () => void;
   onReplayTutorial?: () => void;
 }
 
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNavigateToPlan, onNavigateToSara, onReplayTutorial }) => {
-  // Mode: 'view' (Dashboard) or 'edit' (Form)
-  const [mode, setMode] = useState<'view' | 'edit'>('view');
+  // Mode: 'view' (Dashboard), 'edit' (Form), 'security' (Security Settings)
+  const [mode, setMode] = useState<'view' | 'edit' | 'security'>('view');
   const [showSubModal, setShowSubModal] = useState(false);
   
   const [formData, setFormData] = useState<UserData>(user);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
+
+  // Security Logic States
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [securityProcessing, setSecurityProcessing] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -54,6 +60,51 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
      };
      onSave(updatedUser);
      setFormData(updatedUser);
+  };
+
+  // --- SECURITY FUNCTIONS ---
+  const handleToggle2FA = () => {
+      setSecurityProcessing('2fa');
+      setTimeout(() => {
+          const updatedSecurity = {
+              ...user.security!,
+              twoFactorEnabled: !user.security?.twoFactorEnabled
+          };
+          const updatedUser = { ...user, security: updatedSecurity };
+          onSave(updatedUser);
+          setFormData(updatedUser);
+          setSecurityProcessing(null);
+          setMessage(updatedSecurity.twoFactorEnabled ? '2FA Enabled!' : '2FA Disabled');
+          setTimeout(() => setMessage(''), 2000);
+      }, 1500);
+  };
+
+  const handleChangePassword = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!currentPassword || !newPassword) return;
+      
+      setSecurityProcessing('pwd');
+      setTimeout(() => {
+          const updatedSecurity = {
+              ...user.security!,
+              lastPasswordChange: new Date().toISOString()
+          };
+          const updatedUser = { ...user, security: updatedSecurity };
+          onSave(updatedUser);
+          setFormData(updatedUser);
+          
+          setSecurityProcessing(null);
+          setCurrentPassword('');
+          setNewPassword('');
+          setMessage('Password changed successfully!');
+          setTimeout(() => setMessage(''), 2000);
+      }, 1500);
+  };
+
+  const handleDeleteAccount = () => {
+      if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+          alert("Account deletion request submitted. (Demo)");
+      }
   };
 
   // --- DASHBOARD VIEW ---
@@ -180,7 +231,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
              
              <button 
                onClick={() => setMode('edit')}
-               className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors text-left group"
+               className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left group"
              >
                 <div className="flex items-center gap-3">
                    <div className="p-2 bg-gray-50 rounded-lg group-hover:bg-teal-50 transition-colors">
@@ -191,10 +242,23 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                 <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-teal-500" />
              </button>
              
+             <button 
+               onClick={() => setMode('security')}
+               className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left group"
+             >
+                <div className="flex items-center gap-3">
+                   <div className="p-2 bg-gray-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
+                      <Shield className="w-5 h-5 text-gray-500 group-hover:text-indigo-600 transition-colors" />
+                   </div>
+                   <span className="font-medium text-gray-700 group-hover:text-gray-900">Account Security</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-indigo-500" />
+             </button>
+
              {onReplayTutorial && (
                 <button 
                   onClick={onReplayTutorial}
-                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors text-left group"
+                  className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left group"
                 >
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-gray-50 rounded-lg group-hover:bg-blue-50 transition-colors">
@@ -209,7 +273,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
              {user.subscription.tier === 'free' && (
                 <button 
                   onClick={() => setShowSubModal(true)}
-                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors text-left group"
+                  className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors text-left group"
                 >
                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-gray-50 rounded-lg group-hover:bg-orange-50 transition-colors">
@@ -220,16 +284,6 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-orange-500" />
                 </button>
              )}
-
-             <div className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-not-allowed opacity-60">
-                <div className="flex items-center gap-3">
-                   <div className="p-2 bg-gray-50 rounded-lg">
-                      <User className="w-5 h-5 text-gray-500" />
-                   </div>
-                   <span className="font-medium text-gray-700">Account Security</span>
-                </div>
-                <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full font-bold">Coming Soon</span>
-             </div>
 
           </div>
         </div>
@@ -242,6 +296,159 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
         />
       </div>
     );
+  }
+
+  // --- SECURITY VIEW ---
+  if (mode === 'security') {
+      return (
+        <div className="w-full space-y-6 animate-fade-in pb-24">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4 sticky top-0 bg-slate-50/90 backdrop-blur-md z-10 py-2">
+                <button 
+                onClick={() => setMode('view')}
+                className="bg-white p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all hover:-translate-x-1 shadow-sm hover:shadow-md"
+                >
+                    <ArrowLeft className="w-5 h-5 text-gray-600" />
+                </button>
+                <div>
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        Account Security
+                        <Shield className="w-5 h-5 text-indigo-600" />
+                    </h2>
+                    <p className="text-xs text-slate-500 font-medium">Protect your data and privacy</p>
+                </div>
+            </div>
+
+            {message && (
+                <div className="mb-4 p-3 bg-teal-50 text-teal-700 text-sm rounded-xl font-medium text-center animate-bounce border border-teal-100 flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    {message}
+                </div>
+            )}
+
+            {/* 1. Two-Factor Authentication */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div className="p-5 flex items-center justify-between">
+                    <div className="flex items-start gap-3">
+                        <div className={`p-2.5 rounded-xl ${user.security?.twoFactorEnabled ? 'bg-teal-100 text-teal-600' : 'bg-slate-100 text-slate-500'}`}>
+                            <Smartphone className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-gray-900">2-Factor Authentication</h3>
+                            <p className="text-xs text-slate-500 mt-1 max-w-[200px] leading-relaxed">Secure your account with an extra verification step via SMS.</p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={handleToggle2FA}
+                        disabled={!!securityProcessing}
+                        className={`w-12 h-7 rounded-full p-1 transition-colors duration-300 relative ${user.security?.twoFactorEnabled ? 'bg-teal-500' : 'bg-slate-200'} ${!!securityProcessing ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                        <div className={`w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${user.security?.twoFactorEnabled ? 'translate-x-5' : 'translate-x-0'}`}>
+                            {securityProcessing === '2fa' && <Loader2 className="w-3 h-3 text-teal-600 animate-spin m-1" />}
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            {/* 2. Password Management */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2.5 rounded-xl bg-indigo-100 text-indigo-600">
+                        <Key className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-gray-900">Change Password</h3>
+                        <p className="text-[10px] text-slate-400 font-medium">Last changed: {new Date(user.security?.lastPasswordChange || '').toLocaleDateString()}</p>
+                    </div>
+                </div>
+
+                <form onSubmit={handleChangePassword} className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="space-y-3">
+                        <input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Current Password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm"
+                        />
+                        <div className="relative">
+                            <input 
+                                type={showPassword ? "text" : "password"}
+                                placeholder="New Password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm pr-10"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600"
+                            >
+                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                        </div>
+                    </div>
+                    <button 
+                        type="submit" 
+                        disabled={!currentPassword || !newPassword || !!securityProcessing}
+                        className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                        {securityProcessing === 'pwd' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Update Password'}
+                    </button>
+                </form>
+            </div>
+
+            {/* 3. Login History */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <Laptop className="w-4 h-4 text-slate-500" /> Active Sessions
+                    </h3>
+                </div>
+                <div className="divide-y divide-gray-100">
+                    {user.security?.loginHistory.map((session) => (
+                        <div key={session.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-2 h-2 rounded-full ${session.isCurrent ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></div>
+                                <div>
+                                    <p className="text-sm font-bold text-slate-800">
+                                        {session.device} 
+                                        {session.isCurrent && <span className="ml-2 text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">CURRENT</span>}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {session.location}</span>
+                                        <span>•</span>
+                                        <span>{new Date(session.date).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {!session.isCurrent && (
+                                <button className="text-xs text-red-500 font-bold hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                                    Revoke
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* 4. Danger Zone */}
+            <div className="border border-red-100 bg-red-50/50 rounded-2xl p-5 mt-4">
+                <h3 className="font-bold text-red-900 flex items-center gap-2 mb-2">
+                    <AlertTriangle className="w-5 h-5 text-red-600" /> Danger Zone
+                </h3>
+                <p className="text-xs text-red-800/70 mb-4 leading-relaxed">
+                    Deleting your account is permanent. All your saved lists, scan history, and SARA data will be wiped.
+                </p>
+                <button 
+                    onClick={handleDeleteAccount}
+                    className="w-full border-2 border-red-200 text-red-700 font-bold py-3 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all flex items-center justify-center gap-2 active:scale-95"
+                >
+                    <Trash2 className="w-4 h-4" /> Delete Account
+                </button>
+            </div>
+        </div>
+      );
   }
 
   // --- EDIT FORM VIEW ---
@@ -277,7 +484,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                         name="name"
                         value={formData.name} 
                         onChange={handleChange}
-                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
+                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-base sm:text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
                         placeholder="Your Name"
                     />
                 </div>
@@ -290,13 +497,13 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
                        <Phone className="w-4 h-4 text-gray-400 group-focus-within:text-teal-500 transition-colors" />
                     </div>
-                    <div className="w-full pl-8 py-1 border border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-transparent transition-all bg-gray-50/50 hover:border-teal-400 shadow-sm">
+                    <div className="w-full pl-8 py-1 border border-gray-200 rounded-xl focus-within:ring-4 focus-within:ring-teal-500/10 focus-within:border-teal-500 transition-all bg-gray-50/50 hover:border-teal-400 shadow-sm">
                         <PhoneInput
                             international
                             defaultCountry="MY"
                             value={formData.phone}
                             onChange={(value) => setFormData(prev => ({ ...prev, phone: value || '' }))}
-                            className="px-2 py-2 text-sm font-medium"
+                            className="px-2 py-2 text-base sm:text-sm font-medium"
                             placeholder="Enter phone number"
                         />
                     </div>
@@ -313,7 +520,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                         name="email"
                         value={formData.email} 
                         onChange={handleChange}
-                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
+                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-base sm:text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
                         placeholder="email@example.com"
                     />
                 </div>
@@ -329,7 +536,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                         name="birthday"
                         value={formData.birthday || ''} 
                         onChange={handleChange}
-                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
+                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-base sm:text-sm font-medium hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50"
                     />
                 </div>
             </div>
@@ -343,7 +550,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ user, onSave, onNa
                         name="address"
                         value={formData.address || ''} 
                         onChange={handleChange}
-                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm min-h-[100px] hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50 font-medium"
+                        className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-base sm:text-sm min-h-[100px] hover:border-teal-400 transition-all shadow-sm focus:bg-white bg-gray-50/50 font-medium"
                         placeholder="No 123, Jalan Bijak, Taman Budget, 56000 Kuala Lumpur..."
                     />
                 </div>

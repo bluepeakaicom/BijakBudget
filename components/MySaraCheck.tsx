@@ -61,7 +61,7 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
       {/* Main Content Area */}
       {!result ? (
         // --- INPUT STATE ---
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative">
+        <div className="bg-white rounded-2xl shadow-xl shadow-blue-900/10 border border-slate-200 overflow-hidden relative">
             <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-400/20 rounded-full -ml-10 -mb-10 blur-2xl"></div>
@@ -125,7 +125,7 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
         <div className="space-y-6 animate-slide-up">
             
             {/* Status Banner */}
-            <div className={`rounded-xl p-4 border flex items-center gap-4 shadow-sm ${
+            <div className={`rounded-xl p-4 border flex items-center gap-4 shadow-sm animate-pop-in ${
                 result.isEligible 
                     ? 'bg-emerald-50 border-emerald-100' 
                     : 'bg-red-50 border-red-100'
@@ -157,24 +157,27 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
             {result.isEligible && (
                <>
                  {/* DIGITAL CARD VISUAL */}
-                 <div className="relative w-full aspect-[1.586/1] bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 rounded-2xl shadow-2xl overflow-hidden text-white p-6 flex flex-col justify-between group perspective">
-                    {/* Background Patterns */}
+                 <div className="relative w-full aspect-[1.586/1] bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 rounded-2xl shadow-2xl overflow-hidden text-white p-6 flex flex-col justify-between group perspective transform transition-transform hover:scale-[1.02] duration-500">
+                    {/* Background Patterns & Shimmer */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-white/10 transition-colors"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/20 rounded-full -ml-10 -mb-10 blur-2xl"></div>
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    
+                    {/* Holographic Sheen Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent skew-x-12 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-[1.5s] ease-in-out pointer-events-none"></div>
 
                     {/* Card Top */}
                     <div className="relative z-10 flex justify-between items-start">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-yellow-400/20 backdrop-blur-sm rounded-lg flex items-center justify-center border border-yellow-400/50">
-                                <span className="text-2xl">🇲🇾</span>
+                            <div className="w-10 h-10 bg-yellow-400/20 backdrop-blur-sm rounded-lg flex items-center justify-center border border-yellow-400/50 shadow-sm">
+                                <span className="text-2xl drop-shadow-sm">🇲🇾</span>
                             </div>
                             <div>
                                 <p className="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Malaysia Madani</p>
-                                <p className="text-sm font-bold text-white tracking-wide">MyKasih SARA</p>
+                                <p className="text-sm font-bold text-white tracking-wide shadow-black drop-shadow-sm">MyKasih SARA</p>
                             </div>
                         </div>
-                        <Activity className="w-6 h-6 text-emerald-400 animate-pulse" />
+                        <Activity className="w-6 h-6 text-emerald-400 animate-pulse drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                     </div>
 
                     {/* Card Middle - Balance */}
@@ -182,7 +185,7 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
                         <p className="text-xs text-blue-300 font-medium mb-1">Available Balance</p>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl font-medium text-blue-200">RM</span>
-                            <span className="text-5xl font-black tracking-tight text-white drop-shadow-md">
+                            <span className="text-5xl font-black tracking-tight text-white drop-shadow-lg">
                                 {result.balance.toFixed(2)}
                             </span>
                         </div>
@@ -193,13 +196,13 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
                         <div className="flex justify-between items-end">
                             <div>
                                 <p className="text-[10px] text-blue-300 uppercase tracking-wider mb-1">Cardholder</p>
-                                <p className="font-bold text-lg tracking-wide uppercase truncate max-w-[200px]">
+                                <p className="font-bold text-lg tracking-wide uppercase truncate max-w-[200px] text-shadow-sm">
                                     {result.recipientName || "WARGA MALAYSIA"}
                                 </p>
                             </div>
                             <div className="text-right">
                                 <p className="text-[10px] text-blue-300 uppercase tracking-wider mb-0.5">MyKad</p>
-                                <p className="font-mono text-sm text-blue-100 tracking-widest">
+                                <p className="font-mono text-sm text-blue-100 tracking-widest opacity-90">
                                     {formatDisplayValue(mykad).replace(/\d{4}$/, '****')}
                                 </p>
                             </div>
@@ -253,16 +256,20 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
                                <div className="absolute left-[19px] top-2 bottom-4 w-0.5 bg-slate-100"></div>
 
                                {result.transactions.map((tx, idx) => (
-                                   <div key={idx} className="relative pl-10 pb-6 last:pb-0 group">
+                                   <div 
+                                     key={idx} 
+                                     className="relative pl-10 pb-6 last:pb-0 group animate-slide-up"
+                                     style={{ animationDelay: `${idx * 100}ms` }}
+                                   >
                                        {/* Timeline Dot */}
                                        <div className="absolute left-0 top-1 w-10 h-10 flex items-center justify-center">
-                                           <div className="w-3 h-3 bg-white border-2 border-blue-500 rounded-full group-hover:bg-blue-500 transition-colors shadow-sm z-10"></div>
+                                           <div className="w-3 h-3 bg-white border-2 border-blue-500 rounded-full group-hover:bg-blue-500 transition-colors shadow-sm z-10 group-hover:scale-125 duration-300"></div>
                                        </div>
                                        
                                        {/* Content */}
                                        <div className="flex justify-between items-start">
                                            <div>
-                                               <p className="text-sm font-bold text-slate-800">{tx.merchant}</p>
+                                               <p className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors">{tx.merchant}</p>
                                                <div className="flex items-center gap-2 mt-0.5">
                                                    <Calendar className="w-3 h-3 text-slate-400" />
                                                    <p className="text-xs text-slate-500 font-medium">{tx.date}</p>
@@ -285,7 +292,7 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
                  </div>
 
                  {/* Tip Box */}
-                 <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-3 items-start">
+                 <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-3 items-start animate-fade-in" style={{ animationDelay: '300ms' }}>
                     <div className="bg-indigo-100 p-1.5 rounded-full mt-0.5 shrink-0">
                         <DollarSign className="w-4 h-4 text-indigo-600" />
                     </div>
@@ -301,7 +308,7 @@ export const MySaraCheck: React.FC<MySaraCheckProps> = ({ onBack }) => {
 
             <button 
                 onClick={() => setResult(null)}
-                className="w-full py-3 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors hover:bg-slate-50 rounded-xl"
+                className="w-full py-3 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors hover:bg-slate-50 rounded-xl active:scale-95"
             >
                 Check Another ID
             </button>

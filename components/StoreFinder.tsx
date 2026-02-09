@@ -216,7 +216,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
     <div className="w-full space-y-6 animate-fade-in pb-20">
       
       {/* Smart Locator (Quick Buttons) */}
-      <div className="bg-gradient-to-br from-teal-600 to-teal-800 p-6 rounded-3xl shadow-xl text-white relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
+      <div className="bg-gradient-to-br from-teal-600 to-teal-800 p-6 rounded-3xl shadow-xl shadow-teal-900/10 text-white relative overflow-hidden group hover:shadow-2xl transition-shadow duration-500">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-8 -mt-8 blur-2xl group-hover:bg-white/15 transition-colors"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-teal-400/20 rounded-full -ml-8 -mb-8 blur-xl group-hover:scale-125 transition-transform duration-700"></div>
           
@@ -229,7 +229,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
               <button 
                 onClick={() => handleQuickNearMe("Supermarkets")}
                 disabled={loading}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:scale-[1.03] hover:shadow-lg backdrop-blur-sm group/btn"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg backdrop-blur-sm group/btn touch-manipulation duration-300"
               >
                   <div className="bg-orange-100 p-2.5 rounded-full shadow-sm transform group-hover/btn:rotate-6 transition-transform">
                       <ShoppingBasket className="w-6 h-6 text-orange-600" />
@@ -240,7 +240,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
               <button 
                 onClick={() => handleQuickNearMe("Mini Markets")}
                 disabled={loading}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:scale-[1.03] hover:shadow-lg backdrop-blur-sm group/btn"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg backdrop-blur-sm group/btn touch-manipulation duration-300"
               >
                   <div className="bg-blue-100 p-2.5 rounded-full shadow-sm transform group-hover/btn:-rotate-6 transition-transform">
                       <Store className="w-6 h-6 text-blue-600" />
@@ -251,7 +251,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
               <button 
                 onClick={() => handleQuickNearMe("Convenience Stores")}
                 disabled={loading}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:scale-[1.03] hover:shadow-lg backdrop-blur-sm group/btn"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg backdrop-blur-sm group/btn touch-manipulation duration-300"
               >
                   <div className="bg-purple-100 p-2.5 rounded-full shadow-sm transform group-hover/btn:scale-110 transition-transform">
                       <Coffee className="w-6 h-6 text-purple-600" />
@@ -293,7 +293,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                 value={manualLocation}
                 onChange={(e) => setManualLocation(e.target.value)}
                 placeholder="e.g. Cheras, Penang, Johor Bahru"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm hover:border-teal-400 transition-all bg-slate-50 focus:bg-white focus:shadow-sm"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 text-base sm:text-sm hover:border-teal-400 transition-all bg-slate-50 focus:bg-white"
               />
            </div>
         )}
@@ -307,14 +307,14 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="Search specific store (e.g. 99 Speedmart)"
-                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm hover:border-teal-400 transition-all bg-slate-50 focus:bg-white focus:shadow-sm"
+                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 text-base sm:text-sm hover:border-teal-400 transition-all bg-slate-50 focus:bg-white"
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 transition-colors" />
           </div>
           <button
             onClick={() => handleSearch()}
             disabled={loading}
-            className="bg-teal-600 text-white px-4 py-2 rounded-xl hover:bg-teal-700 disabled:opacity-50 flex items-center gap-2 font-bold shadow-md shadow-teal-600/20 transition-all hover:scale-105 active:scale-95 hover:shadow-lg"
+            className="bg-teal-600 text-white px-4 py-2 rounded-xl hover:bg-teal-700 disabled:opacity-50 flex items-center gap-2 font-bold shadow-lg shadow-teal-600/20 transition-all hover:scale-105 active:scale-95 hover:-translate-y-0.5"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowRight className="w-5 h-5" />}
           </button>
@@ -330,7 +330,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                     <button
                       key={idx}
                       onClick={() => setCategorySearch(chain)}
-                      className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+                      className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 active:translate-y-0"
                     >
                        {chain}
                     </button>
@@ -346,7 +346,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                       <button
                         key={idx}
                         onClick={() => handleQuickNearMe(suggestion.query)}
-                        className="px-3 py-1.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full text-xs font-bold hover:bg-indigo-100 hover:text-indigo-800 transition-all hover:shadow-sm hover:-translate-y-0.5"
+                        className="px-3 py-1.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full text-xs font-bold hover:bg-indigo-100 hover:text-indigo-800 transition-all hover:shadow-sm hover:-translate-y-0.5 active:scale-95 hover:scale-105"
                       >
                          {suggestion.label}
                       </button>
@@ -408,7 +408,8 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                  {parsedStores.map((store, idx) => (
                     <div 
                       key={idx}
-                      className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-teal-500/10 hover:border-teal-300 transition-all duration-300 group relative overflow-hidden hover:-translate-y-1"
+                      className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:shadow-teal-500/10 hover:border-teal-300 transition-all duration-300 group relative overflow-hidden hover:-translate-y-1 animate-slide-up"
+                      style={{ animationDelay: `${idx * 100}ms` }}
                     >
                        {/* Status Badge */}
                        {store.status && (
@@ -512,7 +513,7 @@ export const StoreFinder: React.FC<StoreFinderProps> = ({ initialQuery = '', use
                 <p className="text-slate-400 text-sm font-medium">No locations found yet. Try searching!</p>
              </div>
           )}
-
+          
         </div>
       )}
     </div>

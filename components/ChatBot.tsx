@@ -23,7 +23,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ user }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -84,7 +84,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ user }) => {
         <p className="text-xs font-semibold text-gray-500 mb-1">Sources:</p>
         <div className="flex flex-wrap gap-2">
           {uniqueSources.map((s, i) => (
-             <a key={i} href={s.uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-teal-600 bg-teal-50 px-2 py-1 rounded hover:underline hover:bg-teal-100 transition-colors hover:shadow-sm">
+             <a key={i} href={s.uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-teal-600 bg-teal-50 px-2 py-1 rounded hover:underline hover:bg-teal-100 transition-colors hover:shadow-sm active:scale-95">
                <ExternalLink className="w-3 h-3" />
                {s.title || "Source"}
              </a>
@@ -106,22 +106,23 @@ export const ChatBot: React.FC<ChatBotProps> = ({ user }) => {
       <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-50/30">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 animate-slide-up ${msg.role === 'user' ? 'flex-row-reverse' : ''} group`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm transition-transform group-hover:scale-110 ${msg.role === 'user' ? 'bg-indigo-100' : 'bg-teal-100'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm transition-transform group-hover:scale-110 duration-300 ${msg.role === 'user' ? 'bg-indigo-100' : 'bg-teal-100'}`}>
               {msg.role === 'user' ? <User className="w-5 h-5 text-indigo-600" /> : <Bot className="w-5 h-5 text-teal-600" />}
             </div>
             <div className={`max-w-[80%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${
               msg.role === 'user' 
-                ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-tr-sm hover:-translate-x-1' 
-                : 'bg-white text-gray-800 rounded-tl-sm border border-gray-100 hover:translate-x-1'
+                ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-tr-sm' 
+                : 'bg-white text-gray-800 rounded-tl-sm border border-gray-100'
             }`}>
               <div className="whitespace-pre-wrap">{msg.text}</div>
               {renderSources(msg.id)}
             </div>
           </div>
         ))}
+        
         {isLoading && (
-          <div className="flex gap-3 animate-pulse">
-            <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="flex gap-3 animate-fade-in">
+            <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0 shadow-sm animate-pulse">
                <Bot className="w-5 h-5 text-teal-600" />
             </div>
             <div className="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-sm shadow-sm">
@@ -144,12 +145,12 @@ export const ChatBot: React.FC<ChatBotProps> = ({ user }) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask about subsidies, savings..."
-            className="flex-1 pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:bg-white focus:border-teal-500 text-sm hover:border-teal-300 transition-all shadow-inner"
+            className="flex-1 pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:bg-white focus:border-teal-500 text-base sm:text-sm hover:border-teal-300 transition-all shadow-inner"
           />
           <button 
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="absolute right-2 top-1.5 bg-teal-600 text-white p-1.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:shadow-none"
+            className="absolute right-2 top-1.5 bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:shadow-none"
           >
             <Send className="w-5 h-5" />
           </button>

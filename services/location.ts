@@ -43,38 +43,32 @@ export const getReadableAddress = async (lat: number, lng: number): Promise<stri
     const a: NominatimAddress = data.address;
 
     // --- Malaysian Address Logic ---
-    // Goal: "Sunway Pyramid, Bandar Sunway" or "No 12, Jalan Tun Razak, KL"
+    // Goal: "Sunway Pyramid, Bandar Sunway, 47500" or "No 12, Jalan Tun Razak, KL"
     
     const parts: string[] = [];
 
     // 1. Point of Interest (Mall, Shop, Landmark)
-    // Specificity is key. If user is AT a specific building, show it.
     const poi = a.amenity || a.shop || a.leisure || a.tourism || a.building || a.historic;
     if (poi) parts.push(poi);
 
-    // 2. Road / Street (Jalan, Lorong, Lebuh)
+    // 2. Road / Street
     const road = a.road || a.pedestrian || a.highway;
     if (road) parts.push(road);
 
-    // 3. Neighborhood / Area (Taman, Seksyen, Kampung) - CRITICAL for Malaysia
-    // 'Suburb' usually holds "Bandar Sunway", "TTDI", "Bangsar"
-    // 'Neighbourhood' usually holds "Seksyen 17"
+    // 3. Neighborhood / Area (Taman, Seksyen, Kampung)
     const area = a.suburb || a.neighbourhood || a.residential || a.village || a.industrial;
-    
-    // Only add area if it's not effectively the same as the POI (rare but possible)
     if (area && area !== poi) parts.push(area);
 
-    // 4. District / City
-    // In KL, 'city' is Kuala Lumpur. In Selangor, 'town' might be 'Petaling Jaya'.
-    // 'city_district' is often detailed like 'Lembah Pantai'.
+    // 4. Postcode (Crucial for Malaysian navigation)
+    if (a.postcode) parts.push(a.postcode);
+
+    // 5. District / City
     const city = a.city || a.town || a.city_district || a.district;
     if (city && city !== area) parts.push(city);
 
-    // 5. State (Only if list is short, to keep it concise)
-    // e.g. "Selangor", "Wilayah Persekutuan"
+    // 6. State
     const state = a.state;
-    if (parts.length < 3 && state && state !== city) {
-        // Clean up "Wilayah Persekutuan" to "WP" or remove if City is "Kuala Lumpur"
+    if (parts.length < 4 && state && state !== city) {
         if (state.includes("Kuala Lumpur") && city?.includes("Kuala Lumpur")) {
             // redundant
         } else {
@@ -82,18 +76,17 @@ export const getReadableAddress = async (lat: number, lng: number): Promise<stri
         }
     }
 
-    // Filter duplicates (case insensitive check) and Join
+    // Filter duplicates and Join
     const uniqueParts = parts.filter((element, index) => {
         return parts.findIndex(item => item.toLowerCase() === element.toLowerCase()) === index;
     });
 
-    // Return the top 3 most relevant parts to avoid overly long strings
-    // e.g. "Sunway Pyramid, Jalan PJS 11/15, Bandar Sunway"
+    // Return the top 4 most relevant parts
     if (uniqueParts.length === 0) {
         return `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
     }
 
-    return uniqueParts.slice(0, 3).join(", ");
+    return uniqueParts.slice(0, 4).join(", ");
 
   } catch (error) {
     console.warn("Reverse geocoding error:", error);
